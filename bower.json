@@ -1,0 +1,31 @@
+{
+  "name": "googlemaps-js-api-stub",
+  "description": "Google Maps Javascript API Stub",
+  "main": "stub.js",
+  "authors": [
+    "CodeMangler"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "googlemaps",
+    "maps",
+    "javascript",
+    "api",
+    "js-api",
+    "stub",
+    "dummy",
+    "mock",
+    "double",
+    "fake",
+    "fake",
+    "spy"
+  ],
+  "homepage": "https://github.com/CodeMangler/googlemaps-js-api-stub",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
