@@ -83,6 +83,7 @@ window.google = {
         controls: EMPTY_OBJECT,
         data: {
           add: noop,
+          addListener: noop,
           addGeoJson: noop,
           contains: noop,
           forEach: noop,
