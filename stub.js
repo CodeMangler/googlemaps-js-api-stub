@@ -61,6 +61,8 @@ window.google = {
             west: sw ? (sw.lng || sw.longitude) : 0,
             east: ne ? (ne.lng || ne.longitude) : 0,
         }),
+        union: noop,
+        extend: noop,
       };
     },
     Map: function() {
