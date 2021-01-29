@@ -18,14 +18,23 @@ window.google = {
         };
       },
     },
+    controls: {
+      "right_bottom": EMPTY_ARRAY
+    },
 
     Animation: EMPTY_OBJECT,
     Attribution: EMPTY_OBJECT,
     BicyclingLayer: noop,
     Circle: noop,
-    ControlPosition: EMPTY_OBJECT,
+    ControlPosition: {
+      RIGHT_BOTTOM: "right_bottom"
+    },
     Data: noop,
-    DirectionsRenderer: noop,
+    DirectionsRenderer: function() {
+      return {
+        setMap: noop
+      }
+    },
     DirectionsService: noop,
     DirectionsStatus: EMPTY_OBJECT,
     DistanceMatrixElementStatus: EMPTY_OBJECT,
@@ -39,7 +48,12 @@ window.google = {
     GeocoderStatus: EMPTY_OBJECT,
     GroundOverlay: noop,
     ImageMapType: noop,
-    InfoWindow: fnEmptyObject,
+    InfoWindow: function() {
+      return {
+        addListener: noop,
+        close: noop
+      }
+    },
     KmlLayer: noop,
     KmlLayerStatus: EMPTY_OBJECT,
     LatLng: function(lat, lng) {
@@ -53,6 +67,7 @@ window.google = {
     },
     LatLngBounds: function(ne, sw) {
       return {
+        extend: noop,
         getSouthWest: function() { return sw; },
         getNorthEast: function() { return ne; },
         toJSON: () => ({
@@ -61,8 +76,6 @@ window.google = {
             west: sw ? (sw.lng || sw.longitude) : 0,
             east: ne ? (ne.lng || ne.longitude) : 0,
         }),
-        union: noop,
-        extend: noop,
       };
     },
     Map: function() {
@@ -88,7 +101,9 @@ window.google = {
         setStreetView: noop,
         setTilt: noop,
         setZoom: noop,
-        controls: EMPTY_OBJECT,
+        controls: {
+          "right_bottom": EMPTY_ARRAY
+        },
         data: {
           add: noop,
           addListener: noop,
@@ -145,6 +160,9 @@ window.google = {
         setTitle: noop,
         setVisible: noop,
         setZIndex: noop,
+        setIcon: noop,
+        addListener: noop,
+        getPosition: noop
       };
     },
     MarkerImage: fnEmptyObject,
