@@ -67,7 +67,6 @@ window.google = {
     },
     LatLngBounds: function(ne, sw) {
       return {
-        extend: noop,
         getSouthWest: function() { return sw; },
         getNorthEast: function() { return ne; },
         toJSON: () => ({
@@ -76,6 +75,8 @@ window.google = {
             west: sw ? (sw.lng || sw.longitude) : 0,
             east: ne ? (ne.lng || ne.longitude) : 0,
         }),
+        union: noop,
+        extend: noop,
       };
     },
     Map: function() {
