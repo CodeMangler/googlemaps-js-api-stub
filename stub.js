@@ -199,7 +199,10 @@ window.google = {
     TransitMode: EMPTY_OBJECT,
     TransitRoutePreference: EMPTY_OBJECT,
     TravelMode: EMPTY_OBJECT,
-    UnitSystem: EMPTY_OBJECT,
+    UnitSystem: {
+      METRIC: 0,
+      IMPERIAL: 1
+    },
     ZoomControlStyle: EMPTY_OBJECT,
   },
 };
