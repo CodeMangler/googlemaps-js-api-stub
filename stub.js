@@ -38,7 +38,11 @@ window.google = {
     DirectionsService: noop,
     DirectionsStatus: EMPTY_OBJECT,
     DistanceMatrixElementStatus: EMPTY_OBJECT,
-    DistanceMatrixService: noop,
+    DistanceMatrixService: function() {
+      return {
+        getDistanceMatrix: noop
+      }
+    },
     DistanceMatrixStatus: EMPTY_OBJECT,
     ElevationService: noop,
     ElevationStatus: EMPTY_OBJECT,
