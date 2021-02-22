@@ -64,7 +64,7 @@ window.google = {
       return {
         latitude: parseFloat(lat),
         longitude: parseFloat(lng),
-
+        equals: noop,
         lat: function() { return this.latitude; },
         lng: function() { return this.longitude; },
       };
