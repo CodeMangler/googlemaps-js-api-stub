@@ -38,7 +38,11 @@ window.google = {
     DirectionsService: noop,
     DirectionsStatus: EMPTY_OBJECT,
     DistanceMatrixElementStatus: EMPTY_OBJECT,
-    DistanceMatrixService: noop,
+    DistanceMatrixService: function() {
+      return {
+        getDistanceMatrix: noop
+      }
+    },
     DistanceMatrixStatus: EMPTY_OBJECT,
     ElevationService: noop,
     ElevationStatus: EMPTY_OBJECT,
@@ -60,7 +64,7 @@ window.google = {
       return {
         latitude: parseFloat(lat),
         longitude: parseFloat(lng),
-
+        equals: noop,
         lat: function() { return this.latitude; },
         lng: function() { return this.longitude; },
       };
@@ -199,7 +203,10 @@ window.google = {
     TransitMode: EMPTY_OBJECT,
     TransitRoutePreference: EMPTY_OBJECT,
     TravelMode: EMPTY_OBJECT,
-    UnitSystem: EMPTY_OBJECT,
+    UnitSystem: {
+      METRIC: 0,
+      IMPERIAL: 1
+    },
     ZoomControlStyle: EMPTY_OBJECT,
   },
 };
