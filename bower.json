@@ -2,6 +2,7 @@
   "name": "googlemaps-js-api-stub",
   "description": "Google Maps Javascript API Stub",
   "main": "stub.js",
+  "version": "3.61.0",
   "authors": [
     "CodeMangler"
   ],

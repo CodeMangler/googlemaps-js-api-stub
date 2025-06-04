@@ -9,9 +9,6 @@ All of the stubs are `noop`s and usually return an empty object, or an object wi
 Importing this package into your tests will let you focus on testing your component and UI logic without having to worry about details of the Maps API.
 In addition, you can set up explicit expectations on specific Google Maps API calls when you are testing interactions with the Maps API.
 
-Initial versions of this package stub out significant portions of the documented Maps API.
-Eventually this package will be versioned in lockstep with the Maps API versions (i.e. importing version `X` of this package will stub out version `X` of the Maps API).
-
 ## Usage
 - Install the package
 
