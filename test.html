@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Maps Stub Test</title>
+  <script src="stub.js"></script>
+</head>
+<body>
+  <h1>Google Maps Stub Test</h1>
+  <p>Open the console to see the test results.</p>
+
+  <script>
+    console.log('--- Testing Google Maps Stub ---');
+
+    // Test importLibrary
+    console.log('Testing google.maps.importLibrary...');
+    google.maps.importLibrary('maps').then(() => {
+      console.log('importLibrary resolved');
+    });
+
+    // Test AdvancedMarkerElement
+    console.log('Testing google.maps.marker.AdvancedMarkerElement...');
+    const marker = new google.maps.marker.AdvancedMarkerElement();
+    console.log('AdvancedMarkerElement:', marker);
+    marker.addListener('click', () => {});
+
+    // Test PinElement
+    console.log('Testing google.maps.marker.PinElement...');
+    const pin = new google.maps.marker.PinElement();
+    console.log('PinElement:', pin);
+
+    // Test PlacesService deprecation warning
+    console.log('Testing google.maps.places.PlacesService deprecation warning...');
+    const placesService = new google.maps.places.PlacesService();
+    console.log('PlacesService:', placesService);
+
+    // Test new Place class
+    console.log('Testing google.maps.places.Place...');
+    const newPlace = new google.maps.places.Place();
+    newPlace.fetchFields().then(response => {
+        console.log('places.Place.fetchFields response:', response);
+    });
+
+    // Test old Place deprecation warning
+    console.log('Testing google.maps.Place deprecation warning...');
+    const oldPlace = new google.maps.Place();
+    console.log('oldPlace:', oldPlace);
+
+    // Test old Place search methods
+    console.log('Testing google.maps.Place search methods...');
+    google.maps.Place.searchByText({}).then(response => {
+        console.log('Place.searchByText response:', response);
+    });
+    google.maps.Place.searchNearby({}).then(response => {
+        console.log('Place.searchNearby response:', response);
+    });
+
+
+    // Test FusionTablesLayer deprecation warning
+    console.log('Testing google.maps.FusionTablesLayer deprecation warning...');
+    const fusionTablesLayer = new google.maps.FusionTablesLayer();
+    console.log('FusionTablesLayer:', fusionTablesLayer);
+
+    console.log('--- Test Complete ---');
+  </script>
+</body>
+</html>
