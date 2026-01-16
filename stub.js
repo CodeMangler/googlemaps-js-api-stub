@@ -8,7 +8,7 @@ var fnEmptyObject = function() {
 window.google = {
   maps: {
     __gjsload__: noop,
-    importLibrary: noop,
+    importLibrary: function() { return Promise.resolve(); },
     event: {
       addListener: noop,
       clearInstanceListeners: noop,
@@ -46,6 +46,7 @@ window.google = {
         NOT_FOUND: 'NOT_FOUND'
       },
       PlacesService: function(attrContainer) {
+        console.warn('google.maps.places.PlacesService is deprecated. Use the new Place class instead.');
         return {
           findPlaceFromPhoneNumber: function(request, callback) { callback(EMPTY_ARRAY, google.maps.places.PlacesServiceStatus.OK); },
           findPlaceFromQuery: function(request, callback) { callback(EMPTY_ARRAY, google.maps.places.PlacesServiceStatus.OK); },
@@ -89,7 +90,10 @@ window.google = {
     DistanceMatrixStatus: { OK: 'OK', INVALID_REQUEST: 'INVALID_REQUEST', OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT', REQUEST_DENIED: 'REQUEST_DENIED', UNKNOWN_ERROR: 'UNKNOWN_ERROR', MAX_ELEMENTS_EXCEEDED: 'MAX_ELEMENTS_EXCEEDED', MAX_DIMENSIONS_EXCEEDED: 'MAX_DIMENSIONS_EXCEEDED' },
     ElevationService: function() { return { getElevationAlongPath: function(request, callback) { callback(EMPTY_ARRAY, google.maps.ElevationStatus.OK); }, getElevationForLocations: function(request, callback) { callback(EMPTY_ARRAY, google.maps.ElevationStatus.OK); } }; },
     ElevationStatus: { OK: 'OK', INVALID_REQUEST: 'INVALID_REQUEST', OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT', REQUEST_DENIED: 'REQUEST_DENIED', UNKNOWN_ERROR: 'UNKNOWN_ERROR' },
-    FusionTablesLayer: function(options) { console.warn('FusionTablesLayer is deprecated and non-functional.'); return {setMap: noop, getMap:noop}; },
+    FusionTablesLayer: function(options) {
+      console.warn('FusionTablesLayer is deprecated and non-functional.');
+      return {setMap: noop, getMap:noop};
+    },
     Geocoder: function() { return { geocode: function(request, callback) { callback(EMPTY_ARRAY, google.maps.GeocoderStatus.OK); } }; },
     GeocoderLocationType: { ROOFTOP: 'ROOFTOP', RANGE_INTERPOLATED: 'RANGE_INTERPOLATED', GEOMETRIC_CENTER: 'GEOMETRIC_CENTER', APPROXIMATE: 'APPROXIMATE' },
     GeocoderStatus: { OK: 'OK', ERROR: 'ERROR', INVALID_REQUEST: 'INVALID_REQUEST', OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT', REQUEST_DENIED: 'REQUEST_DENIED', UNKNOWN_ERROR: 'UNKNOWN_ERROR', ZERO_RESULTS: 'ZERO_RESULTS' },
@@ -339,8 +343,20 @@ window.google = {
     },
     ZoomControlStyle: EMPTY_OBJECT,
     Settings: function() {},
-    marker: {},
+    marker: {
+      AdvancedMarkerElement: function(options) {
+        return {
+          addListener: noop,
+          get gmpDraggable() { return false; },
+          set gmpDraggable(value) {},
+        };
+      },
+      PinElement: function(options) {
+        return {};
+      },
+    },
     Place: function(options) {
+      console.warn('google.maps.Place is deprecated. Use google.maps.places.Place instead.');
       this.id = (options && options.id) || null;
       this.displayName = '';
       this.formattedAddress = '';
@@ -403,6 +419,18 @@ google.maps.OverlayView.preventMapHitsAndGesturesFrom = noop;
 google.maps.OverlayView.preventMapHitsFrom = noop;
 
 google.maps.Marker.MAX_ZINDEX = 0;
+
+google.maps.places.Place = function(options) {
+  return {
+    fetchFields: function(options) {
+      return Promise.resolve({
+        place: {
+          name: 'Fake Place',
+        },
+      });
+    },
+  };
+};
 
 google.maps.Place.searchByText = function(request) { return Promise.resolve({places: EMPTY_ARRAY}); };
 google.maps.Place.searchNearby = function(request) { return Promise.resolve({places: EMPTY_ARRAY}); };
