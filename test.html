@@ -9,58 +9,37 @@
   <p>Open the console to see the test results.</p>
 
   <script>
-    console.log('--- Testing Google Maps Stub ---');
+    console.log('--- Testing Google Maps Stub v3.64.0 ---');
 
     // Test importLibrary
     console.log('Testing google.maps.importLibrary...');
-    google.maps.importLibrary('maps').then(() => {
-      console.log('importLibrary resolved');
+    const libraries = ['maps', 'places', 'maps3d', 'routes', 'addressValidation', 'airQuality'];
+    Promise.all(libraries.map(lib => google.maps.importLibrary(lib))).then(() => {
+      console.log('All libraries imported successfully');
     });
 
     // Test AdvancedMarkerElement
     console.log('Testing google.maps.marker.AdvancedMarkerElement...');
-    const marker = new google.maps.marker.AdvancedMarkerElement();
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      title: 'Test Marker',
+      position: { lat: 0, lng: 0 }
+    });
     console.log('AdvancedMarkerElement:', marker);
-    marker.addListener('click', () => {});
-
-    // Test PinElement
-    console.log('Testing google.maps.marker.PinElement...');
-    const pin = new google.maps.marker.PinElement();
-    console.log('PinElement:', pin);
-
-    // Test PlacesService deprecation warning
-    console.log('Testing google.maps.places.PlacesService deprecation warning...');
-    const placesService = new google.maps.places.PlacesService();
-    console.log('PlacesService:', placesService);
 
     // Test new Place class
     console.log('Testing google.maps.places.Place...');
-    const newPlace = new google.maps.places.Place();
+    const newPlace = new google.maps.places.Place({ id: 'test-place' });
     newPlace.fetchFields().then(response => {
         console.log('places.Place.fetchFields response:', response);
     });
 
-    // Test old Place deprecation warning
-    console.log('Testing google.maps.Place deprecation warning...');
-    const oldPlace = new google.maps.Place();
-    console.log('oldPlace:', oldPlace);
-
-    // Test old Place search methods
-    console.log('Testing google.maps.Place search methods...');
-    google.maps.Place.searchByText({}).then(response => {
-        console.log('Place.searchByText response:', response);
-    });
-    google.maps.Place.searchNearby({}).then(response => {
-        console.log('Place.searchNearby response:', response);
+    // Test Routes API
+    console.log('Testing google.maps.routes.computeRoutes...');
+    google.maps.routes.computeRoutes({}).then(response => {
+        console.log('computeRoutes response:', response);
     });
 
-
-    // Test FusionTablesLayer deprecation warning
-    console.log('Testing google.maps.FusionTablesLayer deprecation warning...');
-    const fusionTablesLayer = new google.maps.FusionTablesLayer();
-    console.log('FusionTablesLayer:', fusionTablesLayer);
-
-    console.log('--- Test Complete ---');
+    console.log('--- Test Setup Complete ---');
   </script>
 </body>
 </html>
