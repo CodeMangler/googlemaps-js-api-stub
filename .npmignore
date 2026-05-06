@@ -1,8 +1,3 @@
 test/
 .github/
-test.html
-verify_refined_stub.js
-verify_refined_frontend.spec.js
-frontend_verification_refined.png
-test-results/
 playwright-report/

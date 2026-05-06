@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 
 test('verify google maps stub in browser', async ({ page }) => {
-  const filePath = `file://${path.resolve(__dirname, '../test.html')}`;
+  const filePath = `file://${path.resolve(__dirname, 'test.html')}`;
   await page.goto(filePath);
 
   // Check if google object is defined
@@ -32,5 +32,5 @@ test('verify google maps stub in browser', async ({ page }) => {
   expect(apiCheck.map3dClass).toBe(true);
   expect(apiCheck.airQualityLibOk).toBe(true);
 
-  await page.screenshot({ path: 'frontend_verification_refined.png' });
+  await page.screenshot({ path: 'frontend_verification.png' });
 });

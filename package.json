@@ -31,6 +31,6 @@
     "@playwright/test": "^1.59.1"
   },
   "scripts": {
-    "test": "node test/verify_refined_stub.js && npx playwright test test/verify_refined_frontend.spec.js"
+    "test": "node test/verify_stub.js && npx playwright test test/verify_frontend.spec.js"
   }
 }
