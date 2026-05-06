@@ -1,6 +1,6 @@
 {
   "name": "googlemaps-js-api-stub",
-  "version": "3.63.0",
+  "version": "3.64.0",
   "description": "Google Maps Javascript API Stub",
   "main": "stub.js",
   "repository": {
@@ -18,7 +18,6 @@
     "mock",
     "double",
     "fake",
-    "fake",
     "spy"
   ],
   "author": "CodeMangler",
@@ -26,5 +25,12 @@
   "bugs": {
     "url": "https://github.com/CodeMangler/googlemaps-js-api-stub/issues"
   },
-  "homepage": "https://github.com/CodeMangler/googlemaps-js-api-stub#readme"
+  "homepage": "https://github.com/CodeMangler/googlemaps-js-api-stub#readme",
+  "devDependencies": {
+    "@playwright/browser-chromium": "^1.59.1",
+    "@playwright/test": "^1.59.1"
+  },
+  "scripts": {
+    "test": "node test/verify_stub.js && npx playwright test test/verify_frontend.spec.js"
+  }
 }

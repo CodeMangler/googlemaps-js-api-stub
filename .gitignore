@@ -6,3 +6,9 @@ node_modules
 
 # macOS
 .DS_Store
+
+# Test artifacts
+test-results/
+playwright-report/
+*.png
+.last-run.json
