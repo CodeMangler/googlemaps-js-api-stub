@@ -5,10 +5,28 @@ var fnEmptyObject = function() {
   return EMPTY_OBJECT;
 };
 
-window.google = {
+var google = {
   maps: {
     __gjsload__: noop,
-    importLibrary: function() { return Promise.resolve(); },
+    importLibrary: function(libraryName) {
+      switch (libraryName) {
+        case 'maps':
+        case 'core':
+        case 'marker':
+        case 'geometry':
+        case 'drawing':
+        case 'visualization':
+        case 'journeySharing':
+        case 'places':
+        case 'maps3d':
+        case 'routes':
+        case 'addressValidation':
+        case 'airQuality':
+          return Promise.resolve(google.maps[libraryName] || google.maps);
+        default:
+          return Promise.resolve(google.maps);
+      }
+    },
     event: {
       addListener: noop,
       clearInstanceListeners: noop,
@@ -55,8 +73,31 @@ window.google = {
           textSearch: function(request, callback) { callback(EMPTY_ARRAY, { nextPage: noop, hasNextPage: false }, google.maps.places.PlacesServiceStatus.OK); }
         };
       },
+      Place: function(options) {
+        this.id = (options && options.id) || null;
+        this.displayName = '';
+        this.formattedAddress = '';
+        this.location = null;
+        this.accessibilityOptions = null; this.addressComponents = EMPTY_ARRAY; this.adrFormatAddress = ''; this.allowsDogs = null; this.attributions = EMPTY_ARRAY; this.businessStatus = null; this.editorialSummary = null; this.evChargeOptions = null; this.fuelOptions = null; this.googleMapsURI = ''; this.iconBackgroundColor = ''; this.internationalPhoneNumber = ''; this.nationalPhoneNumber = ''; this.openingHours = null; this.regularOpeningHours = null; this.parkingOptions = null; this.paymentOptions = null; this.photos = EMPTY_ARRAY; this.plusCode = null; this.priceLevel = null; this.rating = null; this.reviews = EMPTY_ARRAY; this.servesBeer = null; this.types = EMPTY_ARRAY; this.userRatingCount = null; this.utcOffsetMinutes = null; this.viewport = null; this.websiteURI = '';
+        return this;
+      },
       PlaceAutocompleteElement: function(options) { return { addEventListener: noop, getPlace: fnEmptyObject, setLocationBias: noop, setLocationRestriction: noop, setTypes: noop }; },
+      BasicPlaceAutocompleteElement: function(options) { return { addEventListener: noop }; },
       PlaceDetailsElement: function(options) { return { addEventListener: noop, place: null }; },
+      PlaceDetailsCompactElement: function(options) { return { addEventListener: noop, place: null }; },
+      PlaceDetailsOrientation: { HORIZONTAL: 'HORIZONTAL', VERTICAL: 'VERTICAL' },
+      PlaceDetailsPlaceRequestElement: function(options) { return { addEventListener: noop }; },
+      PlaceDetailsLocationRequestElement: function(options) { return { addEventListener: noop }; },
+      PlaceSearchElement: function(options) { return { addEventListener: noop, places: EMPTY_ARRAY }; },
+      PlaceSearchAttributionPosition: { BOTTOM: 'BOTTOM', TOP: 'TOP' },
+      PlaceSearchOrientation: { HORIZONTAL: 'HORIZONTAL', VERTICAL: 'VERTICAL' },
+      PlaceNearbySearchRequestElement: function(options) { return { addEventListener: noop }; },
+      PlaceTextSearchRequestElement: function(options) { return { addEventListener: noop }; },
+      PlacePredictionSelectEvent: function() { return { placePrediction: EMPTY_OBJECT }; },
+      PlaceSelectEvent: function() { return { place: EMPTY_OBJECT }; },
+      PlaceContextualElement: function(options) { return { addEventListener: noop }; },
+      PlaceContextualListConfigElement: function(options) { return { addEventListener: noop }; },
+      PlaceContextualListLayout: { COMPACT: 'COMPACT', VERTICAL: 'VERTICAL' },
       PlaceDirectionsButton: function(options) { return { addEventListener: noop, map: null, place: null, travelMode: null }; },
       PlaceMediaElement: function(options) { return { addEventListener: noop, photos: EMPTY_ARRAY }; },
       PlaceReviewsElement: function(options) { return { addEventListener: noop, reviews: EMPTY_ARRAY }; },
@@ -352,8 +393,22 @@ window.google = {
         };
       },
       PinElement: function(options) {
-        return {};
+        return {
+          background: (options && options.background) || null,
+          borderColor: (options && options.borderColor) || null,
+          element: (options && options.element) || null,
+          glyph: (options && options.glyph) || null,
+          glyphColor: (options && options.glyphColor) || null,
+          scale: (options && options.scale) || 1,
+          addEventListener: noop,
+          removeEventListener: noop
+        };
       },
+      CollisionBehavior: {
+        OPTIONAL_AND_HIDES_LOWER_PRIORITY: 'OPTIONAL_AND_HIDES_LOWER_PRIORITY',
+        REQUIRED: 'REQUIRED',
+        REQUIRED_AND_HIDES_OPTIONAL: 'REQUIRED_AND_HIDES_OPTIONAL'
+      }
     },
     Place: function(options) {
       console.warn('google.maps.Place is deprecated. Use google.maps.places.Place instead.');
@@ -362,40 +417,140 @@ window.google = {
       this.formattedAddress = '';
       this.location = null;
       this.accessibilityOptions = null; this.addressComponents = EMPTY_ARRAY; this.adrFormatAddress = ''; this.allowsDogs = null; this.attributions = EMPTY_ARRAY; this.businessStatus = null; this.editorialSummary = null; this.evChargeOptions = null; this.fuelOptions = null; this.googleMapsURI = ''; this.iconBackgroundColor = ''; this.internationalPhoneNumber = ''; this.nationalPhoneNumber = ''; this.openingHours = null; this.regularOpeningHours = null; this.parkingOptions = null; this.paymentOptions = null; this.photos = EMPTY_ARRAY; this.plusCode = null; this.priceLevel = null; this.rating = null; this.reviews = EMPTY_ARRAY; this.servesBeer = null; this.types = EMPTY_ARRAY; this.userRatingCount = null; this.utcOffsetMinutes = null; this.viewport = null; this.websiteURI = '';
+      this.searchByText = function(request) { return Promise.resolve({places: EMPTY_ARRAY}); };
+      this.searchNearby = function(request) { return Promise.resolve({places: EMPTY_ARRAY}); };
+      this.fetchFields = function(request) { return Promise.resolve(this); };
+      this.toJSON = function() { return { id: this.id }; };
+      this.getNextOpeningTime = function(){ return Promise.resolve(null); };
+      this.isOpen = function(date){ return Promise.resolve(false); };
       return this;
     },
-    drawing: {},
-    visualization: {},
-    journeySharing: {},
-    maps3d: {},
-    geometry: {},
+    drawing: {
+      DrawingManager: function(options) { return { getDrawingMode:function(){return null;}, getMap:fnEmptyObject, setDrawingMode:noop, setMap:noop, setOptions:noop, addListener:noop }; },
+      OverlayType: { MARKER: 'marker', POLYGON: 'polygon', POLYLINE: 'polyline', RECTANGLE: 'rectangle', CIRCLE: 'circle' }
+    },
+    visualization: {
+      HeatmapLayer: function(options) { return { getData:function(){return new google.maps.MVCArray();}, getMap:fnEmptyObject, setData:noop, setMap:noop, setOptions:noop }; }
+    },
+    journeySharing: {
+      JourneySharingMapView: function(options) { return { automaticViewportMode: null, element: null, enableTraffic: false, locationProviders: EMPTY_ARRAY, map: null, mapOptions: null, addLocationProvider: noop, removeLocationProvider: noop, addListener: noop }; },
+      FleetEngineServiceType: { DELIVERY_VEHICLE_SERVICE: 'DELIVERY_VEHICLE_SERVICE', TASK_SERVICE: 'TASK_SERVICE', TRIP_SERVICE: 'TRIP_SERVICE', UNKNOWN_SERVICE: 'UNKNOWN_SERVICE' },
+      AutomaticViewportMode: { FIT_ANTICIPATED_ROUTE: 'FIT_ANTICIPATED_ROUTE', NONE: 'NONE'},
+      vehicle: {},
+      TripType: { SHARED: 'SHARED', EXCLUSIVE: 'EXCLUSIVE', UNKNOWN_TRIP_TYPE: 'UNKNOWN_TRIP_TYPE' }
+    },
+    maps3d: {
+      MarkerElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      MarkerInteractiveElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Marker3DElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Marker3DInteractiveElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Model3DElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Model3DInteractiveElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Polyline3DElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Polyline3DInteractiveElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Polygon3DElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Polygon3DInteractiveElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      FlattenerElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      PopoverElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      AltitudeMode: { ABSOLUTE: 'ABSOLUTE', CLAMP_TO_GROUND: 'CLAMP_TO_GROUND', RELATIVE_TO_GROUND: 'RELATIVE_TO_GROUND', RELATIVE_TO_MESH: 'RELATIVE_TO_MESH' },
+      CirclePathElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; },
+      Map3DElement: function(options) { return { addEventListener:noop, center:null, zoom:null, heading:0, tilt:0, roll:0, flyTo:noop, flyCameraTo:noop, stopCameraAnimation:noop }; },
+      MapMode: { HYBRID: 'HYBRID', SATELLITE: 'SATELLITE'}
+    },
+    routes: {
+      Route: function() { return { toJSON: fnEmptyObject, create3DPolylines: function(options) { return Promise.resolve(EMPTY_ARRAY); }, createPolylines: function(options) { return EMPTY_ARRAY; }, createPopover: function() { return Promise.resolve(EMPTY_OBJECT); }, createWaypointAdvancedMarkers: function(options) { return Promise.resolve(EMPTY_ARRAY); } }; },
+      RouteLeg: function() { return { toJSON: fnEmptyObject }; },
+      RouteLegStep: function() { return { toJSON: fnEmptyObject }; },
+      TransitLine: function() { return { toJSON: fnEmptyObject }; },
+      TransitAgency: function() { return { toJSON: fnEmptyObject }; },
+      TransitStop: function() { return { toJSON: fnEmptyObject }; },
+      TransitVehicle: function() { return { toJSON: fnEmptyObject }; },
+      DirectionalLocation: function() { return { toJSON: fnEmptyObject }; },
+      FallbackInfo: function() { return { toJSON: fnEmptyObject }; },
+      GeocodedWaypoint: function() { return { toJSON: fnEmptyObject }; },
+      GeocodingResults: function() { return { toJSON: fnEmptyObject }; },
+      MultiModalSegment: function() { return { toJSON: fnEmptyObject }; },
+      PolylineDetailInfo: function() { return { toJSON: fnEmptyObject }; },
+      PolylineDetails: function() { return { toJSON: fnEmptyObject }; },
+      RouteLegLocalizedValues: function() { return { toJSON: fnEmptyObject }; },
+      RouteLegStepLocalizedValues: function() { return { toJSON: fnEmptyObject }; },
+      RouteLegTravelAdvisory: function() { return { toJSON: fnEmptyObject }; },
+      RouteLocalizedValues: function() { return { toJSON: fnEmptyObject }; },
+      RouteTravelAdvisory: function() { return { toJSON: fnEmptyObject }; },
+      SpeedReadingInterval: function() { return { toJSON: fnEmptyObject }; },
+      StepsOverview: function() { return { toJSON: fnEmptyObject }; },
+      TollInfo: function() { return { toJSON: fnEmptyObject }; },
+      ComputeRoutesExtraComputation: { FLYOVER_INFO_ON_POLYLINE: 'FLYOVER_INFO_ON_POLYLINE', FUEL_CONSUMPTION: 'FUEL_CONSUMPTION', HTML_FORMATTED_NAVIGATION_INSTRUCTIONS: 'HTML_FORMATTED_NAVIGATION_INSTRUCTIONS', NARROW_ROAD_INFO_ON_POLYLINE: 'NARROW_ROAD_INFO_ON_POLYLINE', TOLLS: 'TOLLS', TRAFFIC_ON_POLYLINE: 'TRAFFIC_ON_POLYLINE' },
+      FallbackReason: { LATENCY_EXCEEDED: 'LATENCY_EXCEEDED', SERVER_ERROR: 'SERVER_ERROR' },
+      FallbackRoutingMode: { TRAFFIC_AWARE: 'TRAFFIC_AWARE', TRAFFIC_UNAWARE: 'TRAFFIC_UNAWARE' },
+      PolylineQuality: { HIGH_QUALITY: 'HIGH_QUALITY', OVERVIEW: 'OVERVIEW' },
+      ReferenceRoute: { FUEL_EFFICIENT: 'FUEL_EFFICIENT', SHORTER_DISTANCE: 'SHORTER_DISTANCE' },
+      RoadFeatureState: { DOES_NOT_EXIST: 'DOES_NOT_EXIST', EXISTS: 'EXISTS' },
+      RouteLabel: { DEFAULT_ROUTE: 'DEFAULT_ROUTE', DEFAULT_ROUTE_ALTERNATE: 'DEFAULT_ROUTE_ALTERNATE', FUEL_EFFICIENT: 'FUEL_EFFICIENT', SHORTER_DISTANCE: 'SHORTER_DISTANCE' },
+      RoutingPreference: { TRAFFIC_AWARE: 'TRAFFIC_AWARE', TRAFFIC_AWARE_OPTIMAL: 'TRAFFIC_AWARE_OPTIMAL', TRAFFIC_UNAWARE: 'TRAFFIC_UNAWARE' },
+      Speed: { NORMAL: 'NORMAL', SLOW: 'SLOW', TRAFFIC_JAM: 'TRAFFIC_JAM' },
+      VehicleEmissionType: { DIESEL: 'DIESEL', ELECTRIC: 'ELECTRIC', GASOLINE: 'GASOLINE', HYBRID: 'HYBRID' }
+    },
+    addressValidation: {
+      AddressValidation: { fetchAddressValidation: function(request) { return Promise.resolve(EMPTY_OBJECT); } },
+      Address: function() { return { toJSON: fnEmptyObject }; },
+      AddressComponent: function() { return { toJSON: fnEmptyObject }; },
+      AddressMetadata: function() { return { toJSON: fnEmptyObject }; },
+      ConfirmationLevel: { CONFIRMED: 'CONFIRMED', UNCONFIRMED_AND_SUSPICIOUS: 'UNCONFIRMED_AND_SUSPICIOUS', UNCONFIRMED_BUT_PLAUSIBLE: 'UNCONFIRMED_BUT_PLAUSIBLE' },
+      Geocode: function() { return { fetchPlace: noop, toJSON: fnEmptyObject }; },
+      Granularity: { BLOCK: 'BLOCK', OTHER: 'OTHER', PREMISE: 'PREMISE', PREMISE_PROXIMITY: 'PREMISE_PROXIMITY', ROUTE: 'ROUTE', SUB_PREMISE: 'SUB_PREMISE' },
+      PossibleNextAction: { ACCEPT: 'ACCEPT', CONFIRM: 'CONFIRM', CONFIRM_ADD_SUBPREMISES: 'CONFIRM_ADD_SUBPREMISES', FIX: 'FIX' },
+      USPSAddress: function() { return { toJSON: fnEmptyObject }; },
+      USPSData: function() { return { toJSON: fnEmptyObject }; },
+      Verdict: function() { return { toJSON: fnEmptyObject }; }
+    },
+    airQuality: {
+      AirQualityMeterElement: function(options) { return { addEventListener: noop, removeEventListener: noop }; }
+    },
+    geometry: {
+      encoding: { decodePath: function(encodedPath) { return []; }, encodePath: function(path) { return ''; } },
+      spherical: {
+        computeArea: function(path, radius) { return 0; },
+        computeDistanceBetween: function(from, to, radius) { return 0; },
+        computeHeading: function(from, to) { return 0; },
+        computeLength: function(path, radius) { return 0; },
+        computeOffset: function(from, distance, heading, radius) { return null; },
+        computeOffsetOrigin: function(to, distance, heading, radius) { return null; },
+        computeSignedArea: function(loop, radius) { return 0; },
+        interpolate: function(from, to, fraction) { return null; },
+        traversePath: function(path, fraction) { return { lat: 0, lng: 0 }; }
+      },
+      poly: { containsLocation: function(latLng, polygon) { return false; }, isLocationOnEdge: function(latLng, poly, tolerance) { return false; } }
+    },
     ColorScheme: { LIGHT: 'LIGHT', DARK: 'DARK', FOLLOW_SYSTEM: 'FOLLOW_SYSTEM' },
     RenderingType: { RASTER: 'RASTER', VECTOR: 'VECTOR', UNINITIALIZED: 'UNINITIALIZED' },
     FeatureType: { ADMINISTRATIVE_AREA_LEVEL_1: 'ADMINISTRATIVE_AREA_LEVEL_1', ADMINISTRATIVE_AREA_LEVEL_2: 'ADMINISTRATIVE_AREA_LEVEL_2', COUNTRY: 'COUNTRY', DATASET: 'DATASET', LOCALITY: 'LOCALITY', POSTAL_CODE: 'POSTAL_CODE', SCHOOL_DISTRICT: 'SCHOOL_DISTRICT' },
-    MapsNetworkErrorEndpoint: { DIRECTIONS_ROUTE: 'DIRECTIONS_ROUTE', DISTANCE_MATRIX: 'DISTANCE_MATRIX', ELEVATION_ALONG_PATH: 'ELEVATION_ALONG_PATH', ELEVATION_LOCATIONS: 'ELEVATION_LOCATIONS', FLEET_ENGINE_GET_DELIVERY_VEHICLE: 'FLEET_ENGINE_GET_DELIVERY_VEHICLE', FLEET_ENGINE_GET_TRIP: 'FLEET_ENGINE_GET_TRIP', FLEET_ENGINE_GET_VEHICLE: 'FLEET_ENGINE_GET_VEHICLE', FLEET_ENGINE_LIST_DELIVERY_VEHICLES: 'FLEET_ENGINE_LIST_DELIVERY_VEHICLES', FLEET_ENGINE_LIST_TASKS: 'FLEET_ENGINE_LIST_TASKS', FLEET_ENGINE_LIST_VEHICLES: 'FLEET_ENGINE_LIST_VEHICLES', FLEET_ENGINE_SEARCH_TASKS: 'FLEET_ENGINE_SEARCH_TASKS', GEOCODER_GEOCODE: 'GEOCODER_GEOCODE', MAPS_MAX_ZOOM: 'MAPS_MAX_ZOOM', PLACES_AUTOCOMPLETE: 'PLACES_AUTOCOMPLETE', PLACES_DETAILS: 'PLACES_DETAILS', PLACES_FIND_PLACE_FROM_PHONE_NUMBER: 'PLACES_FIND_PLACE_FROM_PHONE_NUMBER', PLACES_FIND_PLACE_FROM_QUERY: 'PLACES_FIND_PLACE_FROM_QUERY', PLACES_GATEWAY: 'PLACES_GATEWAY', PLACES_GET_PLACE: 'PLACES_GET_PLACE', PLACES_LOCAL_CONTEXT_SEARCH: 'PLACES_LOCAL_CONTEXT_SEARCH', PLACES_NEARBY_SEARCH: 'PLACES_NEARBY_SEARCH', PLACES_SEARCH_TEXT: 'PLACES_SEARCH_TEXT', STREETVIEW_GET_PANORAMA: 'STREETVIEW_GET_PANORAMA' },
+    MapsNetworkErrorEndpoint: {
+      DIRECTIONS_ROUTE: 'DIRECTIONS_ROUTE', DISTANCE_MATRIX: 'DISTANCE_MATRIX', ELEVATION_ALONG_PATH: 'ELEVATION_ALONG_PATH', ELEVATION_LOCATIONS: 'ELEVATION_LOCATIONS',
+      FLEET_ENGINE_GET_DELIVERY_VEHICLE: 'FLEET_ENGINE_GET_DELIVERY_VEHICLE', FLEET_ENGINE_GET_TRIP: 'FLEET_ENGINE_GET_TRIP', FLEET_ENGINE_GET_VEHICLE: 'FLEET_ENGINE_GET_VEHICLE',
+      FLEET_ENGINE_LIST_DELIVERY_VEHICLES: 'FLEET_ENGINE_LIST_DELIVERY_VEHICLES', FLEET_ENGINE_LIST_TASKS: 'FLEET_ENGINE_LIST_TASKS', FLEET_ENGINE_LIST_VEHICLES: 'FLEET_ENGINE_LIST_VEHICLES',
+      FLEET_ENGINE_SEARCH_TASKS: 'FLEET_ENGINE_SEARCH_TASKS', GEOCODER_GEOCODE: 'GEOCODER_GEOCODE', MAPS_MAX_ZOOM: 'MAPS_MAX_ZOOM', PLACES_AUTOCOMPLETE: 'PLACES_AUTOCOMPLETE',
+      PLACES_DETAILS: 'PLACES_DETAILS', PLACES_FIND_PLACE_FROM_PHONE_NUMBER: 'PLACES_FIND_PLACE_FROM_PHONE_NUMBER', PLACES_FIND_PLACE_FROM_QUERY: 'PLACES_FIND_PLACE_FROM_QUERY',
+      PLACES_GATEWAY: 'PLACES_GATEWAY', PLACES_GET_PLACE: 'PLACES_GET_PLACE', PLACES_LOCAL_CONTEXT_SEARCH: 'PLACES_LOCAL_CONTEXT_SEARCH', PLACES_NEARBY_SEARCH: 'PLACES_NEARBY_SEARCH',
+      PLACES_SEARCH_TEXT: 'PLACES_SEARCH_TEXT', STREETVIEW_GET_PANORAMA: 'STREETVIEW_GET_PANORAMA'
+    },
+    RPCStatus: {
+      ABORTED: 'ABORTED', ALREADY_EXISTS: 'ALREADY_EXISTS', CANCELLED: 'CANCELLED', DATA_LOSS: 'DATA_LOSS', DEADLINE_EXCEEDED: 'DEADLINE_EXCEEDED',
+      FAILED_PRECONDITION: 'FAILED_PRECONDITION', INTERNAL: 'INTERNAL', INVALID_ARGUMENT: 'INVALID_ARGUMENT', NOT_FOUND: 'NOT_FOUND', OK: 'OK',
+      OUT_OF_RANGE: 'OUT_OF_RANGE', PERMISSION_DENIED: 'PERMISSION_DENIED', RESOURCE_EXHAUSTED: 'RESOURCE_EXHAUSTED', UNAUTHENTICATED: 'UNAUTHENTICATED',
+      UNAVAILABLE: 'UNAVAILABLE', UNIMPLEMENTED: 'UNIMPLEMENTED', UNKNOWN: 'UNKNOWN'
+    },
+    MapsNetworkError: function() {},
+    MapsRequestError: function() {},
+    MapsServerError: function() {}
   },
 };
 
+if (typeof window !== 'undefined') {
+  window.google = google;
+}
+
 google.maps.LatLngBounds.MAX_BOUNDS = new google.maps.LatLngBounds(new google.maps.LatLng(-90,-180), new google.maps.LatLng(90,180));
-
-google.maps.geometry.encoding = { decodePath: function(encodedPath) { return []; }, encodePath: function(path) { return ''; } };
-google.maps.geometry.spherical = { computeArea: function(path, radius) { return 0; }, computeDistanceBetween: function(from, to, radius) { return 0; }, computeHeading: function(from, to) { return 0; }, computeLength: function(path, radius) { return 0; }, computeOffset: function(from, distance, heading, radius) { return null; }, computeOffsetOrigin: function(to, distance, heading, radius) { return null; }, computeSignedArea: function(loop, radius) { return 0; }, interpolate: function(from, to, fraction) { return null; } };
-google.maps.geometry.poly = { containsLocation: function(latLng, polygon) { return false; }, isLocationOnEdge: function(latLng, poly, tolerance) { return false; } };
-
-google.maps.drawing.DrawingManager = function(options) { return { getDrawingMode:function(){return null;}, getMap:fnEmptyObject, setDrawingMode:noop, setMap:noop, setOptions:noop, addListener:noop }; };
-google.maps.drawing.OverlayType = { MARKER: 'marker', POLYGON: 'polygon', POLYLINE: 'polyline', RECTANGLE: 'rectangle', CIRCLE: 'circle' };
-
-google.maps.visualization.HeatmapLayer = function(options) { return { getData:function(){return new google.maps.MVCArray();}, getMap:fnEmptyObject, setData:noop, setMap:noop, setOptions:noop }; };
-
-google.maps.journeySharing.JourneySharingMapView = function(options) { return { automaticViewportMode: null, element: null, enableTraffic: false, locationProviders: EMPTY_ARRAY, map: null, mapOptions: null, addLocationProvider: noop, removeLocationProvider: noop, addListener: noop }; };
-google.maps.journeySharing.FleetEngineServiceType = { DELIVERY_VEHICLE_SERVICE: 'DELIVERY_VEHICLE_SERVICE', TASK_SERVICE: 'TASK_SERVICE', TRIP_SERVICE: 'TRIP_SERVICE', UNKNOWN_SERVICE: 'UNKNOWN_SERVICE' };
-google.maps.journeySharing.AutomaticViewportMode = { FIT_ANTICIPATED_ROUTE: 'FIT_ANTICIPATED_ROUTE', NONE: 'NONE'};
-google.maps.journeySharing.vehicle = {};
-google.maps.journeySharing.TripType = { SHARED: 'SHARED', EXCLUSIVE: 'EXCLUSIVE', UNKNOWN_TRIP_TYPE: 'UNKNOWN_TRIP_TYPE' };
-
-google.maps.maps3d.Map3DElement = function(options) { return { addEventListener:noop, center:null, zoom:null, heading:0, tilt:0, roll:0, flyTo:noop, flyCameraTo:noop, stopCameraAnimation:noop }; };
-google.maps.maps3d.AltitudeMode = { ABSOLUTE: 'ABSOLUTE', CLAMP_TO_GROUND: 'CLAMP_TO_GROUND', RELATIVE_TO_GROUND: 'RELATIVE_TO_GROUND', RELATIVE_TO_MESH: 'RELATIVE_TO_MESH' };
-google.maps.maps3d.MapMode = { HYBRID: 'HYBRID', SATELLITE: 'SATELLITE'};
 
 google.maps.WebGLOverlayView = function() {};
 google.maps.WebGLOverlayView.prototype.onAdd = noop;
@@ -420,61 +575,4 @@ google.maps.OverlayView.preventMapHitsFrom = noop;
 
 google.maps.Marker.MAX_ZINDEX = 0;
 
-google.maps.places.Place = function(options) {
-  return {
-    fetchFields: function(options) {
-      return Promise.resolve({
-        place: {
-          name: 'Fake Place',
-        },
-      });
-    },
-  };
-};
-
-google.maps.Place.searchByText = function(request) { return Promise.resolve({places: EMPTY_ARRAY}); };
-google.maps.Place.searchNearby = function(request) { return Promise.resolve({places: EMPTY_ARRAY}); };
-google.maps.Place.prototype.fetchFields = function(request) { return Promise.resolve(this); };
-google.maps.Place.prototype.toJSON = function() { return { id: this.id }; };
-google.maps.Place.prototype.getNextOpeningTime = function(){ return Promise.resolve(null); };
-google.maps.Place.prototype.isOpen = function(date){ return Promise.resolve(false); };
-
-google.maps.Settings.getInstance = fnEmptyObject;
-google.maps.Settings.experienceIds = EMPTY_ARRAY;
-google.maps.Settings.fetchAppCheckToken = noop;
-
-google.maps.MapsNetworkError = function() {};
-google.maps.MapsRequestError = function() {};
-google.maps.MapsServerError = function() {};
-
-google.maps.Data.Feature = function(options) { return { forEachProperty:noop, getGeometry:fnEmptyObject, getId:function(){return undefined;}, getProperty:function(name){return undefined;}, removeProperty:noop, setGeometry:noop, setProperty:noop, toGeoJson:function(callback){callback(EMPTY_OBJECT);} }; };
-
-google.maps.marker.AdvancedMarkerElement = function(options) {
-  return {
-    collisionBehavior: (options && options.collisionBehavior) || null,
-    gmpClickable: (options && options.gmpClickable) || null,
-    gmpDraggable: (options && options.gmpDraggable) || false,
-    map: (options && options.map) || null,
-    position: (options && options.position) || null,
-    title: (options && options.title) || '',
-    zIndex: (options && options.zIndex) || null,
-    addListener: noop,
-  };
-};
-
-google.maps.marker.PinElement = function(options) {
-  return {
-    background: (options && options.background) || null,
-    borderColor: (options && options.borderColor) || null,
-    element: (options && options.element) || null,
-    glyph: (options && options.glyph) || null,
-    glyphColor: (options && options.glyphColor) || null,
-    scale: (options && options.scale) || 1,
-  };
-};
-
-google.maps.marker.CollisionBehavior = {
-  OPTIONAL_AND_HIDES_LOWER_PRIORITY: 'OPTIONAL_AND_HIDES_LOWER_PRIORITY',
-  REQUIRED: 'REQUIRED',
-  REQUIRED_AND_HIDES_OPTIONAL: 'REQUIRED_AND_HIDES_OPTIONAL'
-};
+google.maps.routes.Route.computeRoutes = function(request) { return Promise.resolve({ routes: EMPTY_ARRAY }); };

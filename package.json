@@ -1,6 +1,6 @@
 {
   "name": "googlemaps-js-api-stub",
-  "version": "3.63.0",
+  "version": "3.64.0",
   "description": "Google Maps Javascript API Stub",
   "main": "stub.js",
   "repository": {
